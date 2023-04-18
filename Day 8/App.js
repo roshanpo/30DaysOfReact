@@ -6,10 +6,10 @@ export default function App() {
      */
     const [counter, setCounter]= React.useState(0)
     function increment(){
-        return setCounter(counter+1)
+        return setCounter(prevCount => prevCount + 1)  //callback function used and previous state is passed as a parameter
     }
     function decrement(){
-        return setCounter(counter-1)
+        return setCounter(prevCount => prevCount - 1)
     }
     return (
         <div className="counter">

@@ -1,24 +1,23 @@
 import React from "react"
-import memesData from "../memesData.js"
+
 
 export default function Meme() {
-    /**
-     * Challenge: 
-     * 1. Set up the text inputs to save to
-     *    the `topText` and `bottomText` state variables.
-     * 2. Replace the hard-coded text on the image with
-     *    the text being saved to state.
-     */
-    
+
     const [meme, setMeme] = React.useState({
         topText: "",
         bottomText: "",
         randomImage: "http://i.imgflip.com/1bij.jpg" 
     })
-    const [allMemeImages, setAllMemeImages] = React.useState(memesData)
+    const [allMemes, setAllMemes] = React.useState("")
+    
+    React.useEffect(function(){
+        fetch("https://api.imgflip.com/get_memes")
+        .then(res => res.json())
+        .then(data => setAllMemes(data))
+    },[])
     
     function getMemeImage() {
-        const memesArray = allMemeImages.data.memes
+        const memesArray = allMemes.data.memes
         const randomNumber = Math.floor(Math.random() * memesArray.length)
         const url = memesArray[randomNumber].url
         setMeme(prevMeme => ({
@@ -27,11 +26,13 @@ export default function Meme() {
         }))
         
     }
-    function getText(event){
-        setMeme({
-            ...meme,
-            [event.target.name] : event.target.value
-        })
+    
+    function handleChange(event) {
+        const {name, value} = event.target
+        setMeme(prevMeme => ({
+            ...prevMeme,
+            [name]: value
+        }))
     }
     
     return (
@@ -41,15 +42,17 @@ export default function Meme() {
                     type="text"
                     placeholder="Top text"
                     className="form--input"
-                    name = "topText"
-                    onChange = {getText} 
+                    name="topText"
+                    value={meme.topText}
+                    onChange={handleChange}
                 />
                 <input 
                     type="text"
                     placeholder="Bottom text"
                     className="form--input"
-                    name = "bottomText"
-                    onChange ={getText}
+                    name="bottomText"
+                    value={meme.bottomText}
+                    onChange={handleChange}
                 />
                 <button 
                     className="form--button"
